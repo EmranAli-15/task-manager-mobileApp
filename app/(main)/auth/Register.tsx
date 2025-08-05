@@ -1,5 +1,7 @@
 import { ThemedText } from '@/components/ThemedText';
+import Alert from '@/components/ui/Alert';
 import { myButton } from '@/constants/Colors';
+import { baseURL } from '@/utils/baseURL';
 import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, useColorScheme, View } from 'react-native';
@@ -11,8 +13,66 @@ export default function Register() {
     const [color, setColor] = useState("");
     const colorScheme = useColorScheme();
 
-    const [text, setText] = useState("");
-    const [passWord, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    const resetForm = () => {
+        setEmail("");
+        setName("");
+        setPassword("");
+        setConfirmPassword("");
+    }
+
+
+    const handleRegister = async () => {
+        const userInfo = {
+            name, email, password, confirmPassword
+        }
+
+
+        try {
+            const response = await fetch(`${baseURL}/api/createUser`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userInfo)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Login failed!');
+            }
+
+            setLoading(false);
+            resetForm();
+
+            const { data } = result;
+            // localStorage.setItem("token", JSON.stringify(data));
+            // providerLoading(true);
+
+        } catch (error: any) {
+            setLoading(false);
+            setError(error.message);
+        }
+
+    }
+
+
+    const handleSubmit = () => {
+        setError("");
+        if (password !== confirmPassword) return setError("password not matched.");
+        setLoading(true);
+        handleRegister();
+    }
+
+
 
     useEffect(() => {
         if (colorScheme == 'dark') {
@@ -27,17 +87,18 @@ export default function Register() {
 
     return (
         <View style={[styles.container, { backgroundColor: bg }]}>
+            {error && <Alert text={error} type="error"></Alert>}
 
             <View style={{ marginVertical: 10, alignItems: 'center' }}>
                 <Image style={{ width: 100, height: 100, objectFit: 'fill' }} source={require('@/assets/images/taskManager.png')}></Image>
             </View>
 
             <View style={{ backgroundColor: bg }}>
-                <ThemedText style={{ backgroundColor: bg }}>Email:</ThemedText>
+                <ThemedText style={{ backgroundColor: bg }}>Name:</ThemedText>
                 <TextInput
                     style={[styles.input, { color: color, backgroundColor: bg }]}
-                    onChangeText={setText}
-                    value={text}
+                    onChangeText={setName}
+                    value={name}
                     autoFocus={false}
                     placeholder="john doe"
                     placeholderTextColor="gray"
@@ -48,11 +109,11 @@ export default function Register() {
                 <ThemedText style={{ backgroundColor: bg }}>Email:</ThemedText>
                 <TextInput
                     style={[styles.input, { color: color, backgroundColor: bg }]}
-                    onChangeText={setText}
-                    value={text}
+                    onChangeText={setEmail}
+                    value={email}
                     keyboardType='email-address'
                     autoFocus={false}
-                    placeholder="example@gmail.com"
+                    placeholder="john@gmail.com"
                     placeholderTextColor="gray"
                 />
             </View>
@@ -62,7 +123,7 @@ export default function Register() {
                 <TextInput
                     style={[styles.input, { color: color, backgroundColor: bg }]}
                     onChangeText={setPassword}
-                    value={passWord}
+                    value={password}
                     secureTextEntry
                     autoFocus={false}
                     placeholder="*********"
@@ -74,8 +135,8 @@ export default function Register() {
                 <ThemedText style={{ backgroundColor: bg }}>Confirm Password:</ThemedText>
                 <TextInput
                     style={[styles.input, { color: color, backgroundColor: bg }]}
-                    onChangeText={setPassword}
-                    value={passWord}
+                    onChangeText={setConfirmPassword}
+                    value={confirmPassword}
                     secureTextEntry
                     autoFocus={false}
                     placeholder="*********"
@@ -84,9 +145,12 @@ export default function Register() {
             </View>
 
             <View style={{ marginTop: 20, alignItems: 'center' }}>
-                <TouchableOpacity style={{ width: '100%' }} onPress={() => setText("emran@gmail.com")}>
+                <TouchableOpacity style={{ width: '100%' }} onPress={handleSubmit}>
                     <View style={myButton.body}>
-                        <Text style={myButton.text}>Register</Text>
+                        {
+                            loading ? <Text style={myButton.text}>Loading...</Text> :
+                                <Text style={myButton.text}>Register</Text>
+                        }
                     </View>
                 </TouchableOpacity>
             </View>

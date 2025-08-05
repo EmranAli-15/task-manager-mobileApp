@@ -1,8 +1,10 @@
 import { ThemedText } from '@/components/ThemedText';
 import Alert from '@/components/ui/Alert';
 import { myButton } from '@/constants/Colors';
+import { useMyProvider } from '@/userProvider/Provider';
 import { baseURL } from '@/utils/baseURL';
 import { Link } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, useColorScheme, View } from 'react-native';
 
@@ -12,10 +14,13 @@ export default function index() {
     const [color, setColor] = useState("");
     const colorScheme = useColorScheme();
 
+    const { setLoading: providerLoading } = useMyProvider();
+
     const [email, setEmail] = useState("emran@gmail.com");
     const [password, setPassword] = useState("emran");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
 
     const handleLogin = async () => {
         const data = {
@@ -39,19 +44,17 @@ export default function index() {
             }
 
             setLoading(false);
-            setEmail("");
-            setPassword("");
-
+            // setEmail("");
+            // setPassword("");
 
             const { token } = result.data;
 
+            await SecureStore.setItemAsync("token", JSON.stringify(token));
         } catch (error: any) {
             setLoading(false);
             setError(error.message);
         } finally {
-            setTimeout(() => {
-                setError("");
-            }, 2000);
+            providerLoading(true);
         }
     }
 
@@ -124,6 +127,10 @@ export default function index() {
             <View style={{ flex: 1, marginTop: 20, flexDirection: 'row', alignItems: 'baseline' }}>
                 <ThemedText>Don't have account? </ThemedText>
                 <Link href="/(main)/auth/Register" style={{ color: 'blue' }}>Register</Link>
+            </View>
+            <View style={{ flex: 1, marginTop: 20, flexDirection: 'row', alignItems: 'baseline' }}>
+                <ThemedText>Don't have account? </ThemedText>
+                <Link href="/(main)/home" style={{ color: 'blue' }}>Register</Link>
             </View>
 
         </View>

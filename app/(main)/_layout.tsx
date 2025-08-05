@@ -1,9 +1,19 @@
-import { Stack } from 'expo-router'
-import React from 'react'
+import { useMyProvider } from '@/userProvider/Provider';
+import { Stack } from 'expo-router';
+export default function MainLayout() {
+    const { user } = useMyProvider();
 
-export default function HomeLayout() {
     return (
         <Stack screenOptions={{ headerShown: false }}>
+
+            <Stack.Protected guard={!user}>
+                <Stack.Screen name="auth/index" />
+            </Stack.Protected>
+
+            <Stack.Protected guard={user}>
+                <Stack.Screen name="home/index" />
+            </Stack.Protected>
+
         </Stack>
-    )
+    );
 }
