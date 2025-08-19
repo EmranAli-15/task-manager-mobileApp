@@ -1,13 +1,12 @@
 import React from 'react'
-import { SafeAreaView } from 'react-native'
-import { ThemedView } from './ThemedView'
+import { SafeAreaView, View } from 'react-native'
 
 export default function Container({ children }: { children: React.ReactNode }) {
     return (
-        <ThemedView style={{ padding: 10 }}>
+        <View style={{ padding: 10, flex: 1 }}>
             <SafeAreaView>
                 {children}
             </SafeAreaView>
-        </ThemedView>
+        </View>
     )
 }

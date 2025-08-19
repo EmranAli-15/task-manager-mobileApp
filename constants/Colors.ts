@@ -32,7 +32,8 @@ export const myButton: any = {
     height: 40,
     borderRadius: 5,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingHorizontal: 10
   },
 
   text: {
