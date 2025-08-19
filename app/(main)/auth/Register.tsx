@@ -1,8 +1,10 @@
 import { ThemedText } from '@/components/ThemedText';
 import Alert from '@/components/ui/Alert';
 import { myButton } from '@/constants/Colors';
+import { useMyProvider } from '@/userProvider/Provider';
 import { baseURL } from '@/utils/baseURL';
 import { Link } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, useColorScheme, View } from 'react-native';
 
@@ -10,16 +12,17 @@ import { Image, StyleSheet, Text, TextInput, TouchableOpacity, useColorScheme, V
 
 export default function Register() {
     const [bg, setBg] = useState("");
+    const { setLoading: providerLoading } = useMyProvider();
     const [color, setColor] = useState("");
     const colorScheme = useColorScheme();
 
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [name, setName] = useState("sakib");
+    const [email, setEmail] = useState("sakib@gmail.com");
+    const [password, setPassword] = useState("sakib");
+    const [confirmPassword, setConfirmPassword] = useState("sakib");
 
     const resetForm = () => {
         setEmail("");
@@ -53,13 +56,14 @@ export default function Register() {
             setLoading(false);
             resetForm();
 
-            const { data } = result;
-            // localStorage.setItem("token", JSON.stringify(data));
-            // providerLoading(true);
+            const { data: token } = result;
+            await SecureStore.setItemAsync("token", JSON.stringify(token));
 
         } catch (error: any) {
             setLoading(false);
             setError(error.message);
+        } finally {
+            providerLoading(true);
         }
 
     }
@@ -68,6 +72,8 @@ export default function Register() {
     const handleSubmit = () => {
         setError("");
         if (password !== confirmPassword) return setError("password not matched.");
+        if (!name) return setError("Please enter name");
+        if (!email) return setError("Please write email");
         setLoading(true);
         handleRegister();
     }

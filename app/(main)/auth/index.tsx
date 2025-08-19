@@ -44,9 +44,6 @@ export default function index() {
             }
 
             setLoading(false);
-            // setEmail("");
-            // setPassword("");
-
             const { token } = result.data;
 
             await SecureStore.setItemAsync("token", JSON.stringify(token));
@@ -127,10 +124,6 @@ export default function index() {
             <View style={{ flex: 1, marginTop: 20, flexDirection: 'row', alignItems: 'baseline' }}>
                 <ThemedText>Don't have account? </ThemedText>
                 <Link href="/(main)/auth/Register" style={{ color: 'blue' }}>Register</Link>
-            </View>
-            <View style={{ flex: 1, marginTop: 20, flexDirection: 'row', alignItems: 'baseline' }}>
-                <ThemedText>Don't have account? </ThemedText>
-                <Link href="/(main)/home" style={{ color: 'blue' }}>Register</Link>
             </View>
 
         </View>

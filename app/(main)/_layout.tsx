@@ -10,6 +10,10 @@ export default function MainLayout() {
                 <Stack.Screen name="auth/index" />
             </Stack.Protected>
 
+            <Stack.Protected guard={!user}>
+                <Stack.Screen name="auth/Register" />
+            </Stack.Protected>
+
             <Stack.Protected guard={user}>
                 <Stack.Screen name="home/index" />
             </Stack.Protected>
