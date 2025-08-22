@@ -6,13 +6,10 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import * as SecureStore from 'expo-secure-store';
 import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 
 import Alert from '@/components/ui/Alert';
-import HomeCardSkeleton from '@/components/ui/HomeCardSkeleton';
-import { BusinessIcon, EducationIcon, HobbyIcon, HomeWorkIcon, IdeaIcon, WorkSpaceIcon } from '@/icons/Icons';
 import { baseURL } from '@/utils/baseURL';
-
 
 type TCard = {
   name: string,
@@ -20,19 +17,6 @@ type TCard = {
   _id: string,
   index: number,
 }
-
-
-
-
-const icons = [
-  <WorkSpaceIcon></WorkSpaceIcon>,
-  <HomeWorkIcon></HomeWorkIcon>,
-  <IdeaIcon></IdeaIcon>,
-  <HobbyIcon></HobbyIcon>,
-  <EducationIcon></EducationIcon>,
-  <BusinessIcon></BusinessIcon>
-]
-
 
 export default function index() {
   const [option, setOption] = useState(false);
@@ -108,7 +92,7 @@ export default function index() {
         <TouchableOpacity onPress={() => setOption(true)}>
           <View>
             {
-              <Fontisto name="power" size={20} color="white" />
+              <Fontisto name="power" size={20} color="blue" />
             }
           </View>
         </TouchableOpacity>
@@ -118,37 +102,31 @@ export default function index() {
             {
               <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
                 <ThemedText>Add Note</ThemedText>
-                <AntDesign name="plussquare" size={20} color="white" />
+                <AntDesign name="plussquare" size={20} color="blue" />
               </View>
             }
           </View>
         </TouchableOpacity>
       </View>
-<WorkSpaceIcon></WorkSpaceIcon>
 
-      <View>
-        {
-          loading ? <HomeCardSkeleton></HomeCardSkeleton> :
-            error && !loading ?
-              <Alert text={error} type='error'></Alert> :
-              !error && !loading && categories.length == 0 ?
-                <Alert type="warning" text='You have not any notes!'></Alert> :
-                <View>
-                  {
-                    categories.map((item: TCard, index: any) => {
-                      return (
-                        <View key={index}>
-                          {
-                            
-                          }
-                          <ThemedText>{item.name}</ThemedText>
-                        </View>
-                      )
-                    })
-                  }
-                </View>
-        }
-      </View>
+      <FlatList
+        data={categories}
+        keyExtractor={(item: TCard, index) => index.toString()}
+        ListEmptyComponent={<Alert type="warning" text='You have not any notes!' />}
+        renderItem={({ item }) => (
+          <View style={{ marginBottom: 20 }}>
+            <View style={{ flexDirection: "column", alignItems: "center" }}>
+              <Image style={{ width: '60%', height: 200 }} source={require('@/assets/images/workSpace.png')} />
+            </View>
+
+            <View style={{ position: "absolute" }}>
+              <View style={{ flexDirection: "column", justifyContent: "center", backgroundColor: "#000000a1", height: 50, width: "100%" }}>
+                <ThemedText style={{ fontSize: 22, fontWeight: "bold" }}>{item.name}</ThemedText>
+              </View>
+            </View>
+          </View>
+        )}
+      />
 
 
 
