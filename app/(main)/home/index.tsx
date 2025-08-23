@@ -5,11 +5,12 @@ import { useMyProvider } from '@/userProvider/Provider';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import * as SecureStore from 'expo-secure-store';
-import React, { useEffect, useState } from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 
 import Alert from '@/components/ui/Alert';
 import { baseURL } from '@/utils/baseURL';
+import { Link } from 'expo-router';
 
 type TCard = {
   name: string,
@@ -27,6 +28,10 @@ export default function index() {
   const [error, setError] = useState("");
 
 
+  const [refreshing, setRefreshing] = useState(false);
+
+
+
 
   const handleFetchData = async () => {
     try {
@@ -42,6 +47,8 @@ export default function index() {
     } catch (error: any) {
       setLoading(false);
       setError(error.message);
+    } finally {
+      setRefreshing(false);
     }
   }
 
@@ -49,6 +56,11 @@ export default function index() {
   useEffect(() => {
     handleFetchData();
   }, [user.id])
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    handleFetchData()
+  }, []);
 
   const logout = async () => {
     try { await SecureStore.deleteItemAsync("token"); }
@@ -114,18 +126,29 @@ export default function index() {
         keyExtractor={(item: TCard, index) => index.toString()}
         ListEmptyComponent={<Alert type="warning" text='You have not any notes!' />}
         renderItem={({ item }) => (
-          <View style={{ marginBottom: 20 }}>
-            <View style={{ flexDirection: "column", alignItems: "center" }}>
-              <Image style={{ width: '60%', height: 200 }} source={require('@/assets/images/workSpace.png')} />
-            </View>
+          <Link href={{
+            pathname: `/(main)/home/Notes/[id]`,
+            params: { id: item._id },
+          }}
+            style={{ marginTop: 20 }}
+          >
+            <View style={{ marginBottom: 20, width: "100%" }}>
+              <View style={{ flexDirection: "column", alignItems: "center" }}>
+                <Image source={{ uri: item.image }}
+                  style={{ width: 200, height: 200, objectFit: "fill" }} />
+              </View>
 
-            <View style={{ position: "absolute" }}>
-              <View style={{ flexDirection: "column", justifyContent: "center", backgroundColor: "#000000a1", height: 50, width: "100%" }}>
-                <ThemedText style={{ fontSize: 22, fontWeight: "bold" }}>{item.name}</ThemedText>
+              <View style={{ position: "absolute", width: "100%" }}>
+                <View style={{ flexDirection: "column", justifyContent: "center", backgroundColor: "#000000a1", height: 50, width: "100%", paddingHorizontal: 10 }}>
+                  <ThemedText style={{ fontSize: 22, fontWeight: "bold" }}>{item.name}</ThemedText>
+                </View>
               </View>
             </View>
-          </View>
+          </Link>
         )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
 
 
