@@ -6,9 +6,10 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import * as SecureStore from 'expo-secure-store';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import Alert from '@/components/ui/Alert';
+import HomeCardSkeleton from '@/components/ui/HomeCardSkeleton';
 import { baseURL } from '@/utils/baseURL';
 import { Link } from 'expo-router';
 
@@ -99,7 +100,7 @@ export default function index() {
         }
       </View>
 
-
+      {/* Header option */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <TouchableOpacity onPress={() => setOption(true)}>
           <View>
@@ -121,35 +122,45 @@ export default function index() {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={categories}
-        keyExtractor={(item: TCard, index) => index.toString()}
-        ListEmptyComponent={<Alert type="warning" text='You have not any notes!' />}
-        renderItem={({ item }) => (
-          <Link href={{
-            pathname: `/(main)/home/Notes/[id]`,
-            params: { id: item._id },
-          }}
-            style={{ marginTop: 20 }}
-          >
-            <View style={{ marginBottom: 20, width: "100%" }}>
-              <View style={{ flexDirection: "column", alignItems: "center" }}>
-                <Image source={{ uri: item.image }}
-                  style={{ width: 200, height: 200, objectFit: "fill" }} />
-              </View>
+      {
+        loading ? <ScrollView>
+          <View style={{ flexDirection: "column", gap: 5 }}>
+            <HomeCardSkeleton></HomeCardSkeleton>
+            <HomeCardSkeleton></HomeCardSkeleton>
+            <HomeCardSkeleton></HomeCardSkeleton>
+            <HomeCardSkeleton></HomeCardSkeleton>
+          </View>
+        </ScrollView> :
+          <FlatList
+            data={categories}
+            keyExtractor={(item: TCard, index) => index.toString()}
+            ListEmptyComponent={<Alert type="warning" text='You have not any notes!' />}
+            renderItem={({ item }) => (
+              <Link href={{
+                pathname: `/(main)/home/Notes/[id]`,
+                params: { id: item._id },
+              }}
+                style={{ marginTop: 20 }}
+              >
+                <View style={{ marginBottom: 20, width: "100%" }}>
+                  <View style={{ flexDirection: "column", alignItems: "center" }}>
+                    <Image source={{ uri: item.image }}
+                      style={{ width: 200, height: 200, objectFit: "fill" }} />
+                  </View>
 
-              <View style={{ position: "absolute", width: "100%" }}>
-                <View style={{ flexDirection: "column", justifyContent: "center", backgroundColor: "#000000a1", height: 50, width: "100%", paddingHorizontal: 10 }}>
-                  <ThemedText style={{ fontSize: 22, fontWeight: "bold" }}>{item.name}</ThemedText>
+                  <View style={{ position: "absolute", width: "100%" }}>
+                    <View style={{ flexDirection: "column", justifyContent: "center", backgroundColor: "#000000a1", height: 50, width: "100%", paddingHorizontal: 10 }}>
+                      <ThemedText style={{ fontSize: 22, fontWeight: "bold" }}>{item.name}</ThemedText>
+                    </View>
+                  </View>
                 </View>
-              </View>
-            </View>
-          </Link>
-        )}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
+              </Link>
+            )}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          />
+      }
 
 
 
