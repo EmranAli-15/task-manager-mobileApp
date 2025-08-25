@@ -1,12 +1,11 @@
 import Container from '@/components/Container';
-import { ThemedText } from '@/components/ThemedText';
 import Alert from '@/components/ui/Alert';
 import NoteCardSkeleton from '@/components/ui/NoteCardSkeleton';
 import { useMyProvider } from '@/userProvider/Provider';
 import { baseURL } from '@/utils/baseURL';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { FlatList, ScrollView, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FlatList, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function Notes() {
     const { id } = useLocalSearchParams();
@@ -15,6 +14,7 @@ export default function Notes() {
     const [notes, setNotes] = useState([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
 
 
 
@@ -41,8 +41,15 @@ export default function Notes() {
         } catch (error: any) {
             setLoading(false);
             setError(error.message);
+        } finally {
+            setRefreshing(false)
         }
     }
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        handleFetchData()
+    }, []);
 
     useEffect(() => {
         handleFetchData();
@@ -62,16 +69,60 @@ export default function Notes() {
                     </View>
                 </ScrollView> :
                     <FlatList
+                        style={{ minHeight: "100%" }}
                         data={notes}
                         keyExtractor={(item: any, index) => index.toString()}
                         ListEmptyComponent={<Alert type="warning" text='You have not any notes!' />}
                         renderItem={({ item }) => (
-                            <ThemedText>
-                                {item.title}
-                            </ThemedText>
+                            <View style={{ marginBottom: 10 }}>
+                                <View style={[style.head, { backgroundColor: item.color.header }]}>
+                                    <Text style={style.title}>
+                                        {
+                                            item.title.length > 70 ? <Text>{item.title.slice(0, 70)} ...</Text> : item.title
+                                        }
+                                    </Text>
+                                </View>
+                                <View style={[style.body, { backgroundColor: item.color.body }]}>
+                                    <Text>
+                                        {
+                                            item.details.length > 150 ? item.details.slice(0, 150) : item.details
+                                        }
+                                    </Text>
+                                </View>
+                            </View>
                         )}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }
                     />
             }
         </Container>
     )
 }
+
+const style = StyleSheet.create({
+    title: {
+        fontWeight: '700',
+        fontSize: 18,
+    },
+    head: {
+        width: "100%",
+        height: 80,
+        borderTopRightRadius: 30,
+        borderTopLeftRadius: 30,
+        padding: 10,
+        flex: 1,
+        justifyContent: "center"
+    },
+    body: {
+        width: "100%",
+        height: 180,
+        borderBottomRightRadius: 30,
+        borderBottomLeftRadius: 30,
+        padding: 10,
+    },
+    lines: {
+        height: 10,
+        borderRadius: 50,
+    }
+})
