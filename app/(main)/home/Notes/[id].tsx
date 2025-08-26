@@ -3,7 +3,7 @@ import Alert from '@/components/ui/Alert';
 import NoteCardSkeleton from '@/components/ui/NoteCardSkeleton';
 import { useMyProvider } from '@/userProvider/Provider';
 import { baseURL } from '@/utils/baseURL';
-import { useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -74,22 +74,28 @@ export default function Notes() {
                         keyExtractor={(item: any, index) => index.toString()}
                         ListEmptyComponent={<Alert type="warning" text='You have not any notes!' />}
                         renderItem={({ item }) => (
-                            <View style={{ marginBottom: 10 }}>
-                                <View style={[style.head, { backgroundColor: item.color.header }]}>
-                                    <Text style={style.title}>
-                                        {
-                                            item.title.length > 70 ? <Text>{item.title.slice(0, 70)} ...</Text> : item.title
-                                        }
-                                    </Text>
+                            <Link href={{
+                                pathname: `/(main)/home/InsedeNote/[id]`,
+                                params: { id: item._id },
+                            }}
+                            >
+                                <View style={{ marginBottom: 10, width: "100%" }}>
+                                    <View style={[style.head, { backgroundColor: item.color.header }]}>
+                                        <Text style={style.title}>
+                                            {
+                                                item.title.length > 70 ? <Text>{item.title.slice(0, 70)} ...</Text> : item.title
+                                            }
+                                        </Text>
+                                    </View>
+                                    <View style={[style.body, { backgroundColor: item.color.body }]}>
+                                        <Text>
+                                            {
+                                                item.details.length > 150 ? item.details.slice(0, 150) : item.details
+                                            }
+                                        </Text>
+                                    </View>
                                 </View>
-                                <View style={[style.body, { backgroundColor: item.color.body }]}>
-                                    <Text>
-                                        {
-                                            item.details.length > 150 ? item.details.slice(0, 150) : item.details
-                                        }
-                                    </Text>
-                                </View>
-                            </View>
+                            </Link>
                         )}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
