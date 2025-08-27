@@ -29,7 +29,7 @@ export default function Color({ colorPalettle, setColorPalettle, color, setColor
     return (
         <View>
             <TouchableOpacity onPress={() => setColorPalettle(!colorPalettle)} style={style.buttonWidth}>
-                <View style={style.button}>
+                <View style={[style.button, { borderColor: color.header }]}>
                     <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
                         <ThemedText>Color</ThemedText>
                         <Ionicons name="color-palette-sharp" size={20} color={color.header} />
@@ -69,7 +69,6 @@ export default function Color({ colorPalettle, setColorPalettle, color, setColor
 
 const style = StyleSheet.create({
     button: {
-        borderColor: "blue",
         paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 5,
