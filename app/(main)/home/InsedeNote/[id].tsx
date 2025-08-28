@@ -3,9 +3,10 @@ import Category from '@/components/navOptions/Category';
 import Color from '@/components/navOptions/Color';
 import List from '@/components/navOptions/List';
 import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function InsideNote() {
 
@@ -18,11 +19,13 @@ export default function InsideNote() {
     const [list, setList] = useState<string[]>([]);
 
 
-console.log(list)
-
     const handleList = () => {
         setList([...list, ""])
     }
+
+
+    const [details, setDetails] = useState("");
+
 
     return (
         <Container>
@@ -53,9 +56,29 @@ console.log(list)
             </ScrollView>
 
 
-            <View>
-                <List list={list} setList={setList}></List>
-            </View>
+
+            {/* THIS SECTION CAN SHRINK AND I NEED TO MAKE IT SCROLLABLE */}
+
+            <ScrollView>
+                <View style={{ marginTop: 20 }}>
+                    <View>
+                        <List list={list} setList={setList}></List>
+                    </View>
+
+                    <ThemedView>
+                        <TextInput
+                            style={{ minHeight: 400, color: color.header, fontSize: 16, marginBottom: 50 }}
+                            onChangeText={(text) => setDetails(text)}
+                            value={details}
+                            textAlignVertical='top'
+                            autoFocus={false}
+                            multiline
+                            placeholder='Details ...'
+                            placeholderTextColor="grey"
+                        />
+                    </ThemedView>
+                </View>
+            </ScrollView>
 
         </Container>
     )
