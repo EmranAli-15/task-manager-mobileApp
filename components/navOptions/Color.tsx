@@ -38,7 +38,7 @@ export default function Color({ colorPalettle, setColorPalettle, color, setColor
             </TouchableOpacity>
 
             {
-                colorPalettle && <View>
+                colorPalettle && <View style={style.colorPalette}>
                     <TouchableOpacity onPress={() => handleColorCode("yellow")} style={style.buttonWidth}>
                         <View style={[style.colorButton, { backgroundColor: "yellow" }]}>
                         </View>
@@ -82,6 +82,11 @@ const style = StyleSheet.create({
         alignItems: 'center',
         height: 30,
         width: 85
+    },
+    colorPalette: {
+        position: "absolute",
+        borderRadius:5,
+        top: 40
     },
     buttonWidth: {
         alignSelf: "flex-start"

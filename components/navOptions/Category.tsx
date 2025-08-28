@@ -1,9 +1,13 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { ThemedText } from '../ThemedText';
 
 export default function Category({ category, setCategory }: { category: { value: string, key: string }, setCategory: Function }) {
+    const colorScheme = useColorScheme();
+    let themeColor = "white";
+    if (colorScheme == "dark") themeColor = "black"
+    else themeColor = "white"
 
     const [categoryOps, setCategoryOps] = useState(false);
 
@@ -32,7 +36,7 @@ export default function Category({ category, setCategory }: { category: { value:
                 // <option value="687231b05282890fad825d84">Idea</option>
                 // <option value="687231b05282890fad825d87">Hobby</option>
                 // <option value="687231b05282890fad825d86">Business</option>
-                <View>
+                <View style={[style.categoryBox, {backgroundColor: themeColor}]}>
                     <TouchableOpacity
                         onPress={() => handleCategory({ value: "Home work", key: "687231b05282890fad825d83" })}>
                         <ThemedText style={style.categoryLists}>Home work</ThemedText>
@@ -82,6 +86,12 @@ const style = StyleSheet.create({
         borderColor: "grey",
         borderRadius: 3,
         borderWidth: 1
+    },
+    categoryBox: {
+        position: "absolute",
+        borderRadius: 5,
+        zIndex: 999,
+        top: 40,
     },
     buttonWidth: {
         alignSelf: "flex-start"

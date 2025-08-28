@@ -1,3 +1,4 @@
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, useColorScheme, View } from 'react-native';
 
@@ -24,11 +25,12 @@ export default function List({ list, setList }: { list: string[], setList: Funct
     return (
         <View>
             <FlatList
-                scrollEnabled={false}
                 data={list}
+                scrollEnabled={false}
                 keyExtractor={(_, index) => index.toString()}
                 renderItem={({ item, index }) => (
                     <View style={style.row}>
+                        <MaterialIcons name="drag-indicator" size={18} color={color} />
                         <TextInput
                             style={[style.input, { flex: 1, color: color }]}
                             onChangeText={(text) => handleChange(text, index)}
@@ -39,7 +41,7 @@ export default function List({ list, setList }: { list: string[], setList: Funct
                             placeholderTextColor="grey"
                         />
                         {
-                            <TouchableOpacity style={style.deleteButton} onPress={() => handleDelete(index)}>
+                            focus == index && <TouchableOpacity style={style.deleteButton} onPress={() => handleDelete(index)}>
                                 <Text style={style.deleteText}>✕</Text>
                             </TouchableOpacity>
                         }
@@ -57,9 +59,6 @@ const style = StyleSheet.create({
         marginVertical: 6,
     },
     input: {
-        borderBottomWidth: 1,
-        borderLeftWidth: 1,
-        borderColor: "blue",
         borderRadius: 5,
         padding: 5,
         fontSize: 16,
