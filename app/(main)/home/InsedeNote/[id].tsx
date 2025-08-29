@@ -7,19 +7,24 @@ import { ThemedView } from '@/components/ThemedView';
 import Alert from '@/components/ui/Alert';
 import { useMyProvider } from '@/userProvider/Provider';
 import { baseURL } from '@/utils/baseURL';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, useColorScheme, View } from 'react-native';
 
 export default function InsideNote() {
     const colorScheme = useColorScheme();
+    const navigate = useNavigation();
     let themeColor = "white";
     if (colorScheme == "dark") themeColor = "white"
     else themeColor = "black"
 
     const { user } = useMyProvider();
     const { id } = useLocalSearchParams();
+
+    const [modal, setModal] = useState(false);
 
 
     const [error, setError] = useState("");
@@ -38,6 +43,34 @@ export default function InsideNote() {
 
     const handleList = () => {
         setList([...list, ""])
+    }
+
+    const handleDelete = async () => {
+        setError("");
+        setLoading(true);
+
+        try {
+            const response = await fetch(`${baseURL}/api/deleteNote/${noteId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Note delete failed!');
+            }
+            navigate.goBack();
+        } catch (error: any) {
+            setLoading(false);
+            setError(error.message);
+        } finally {
+            setTimeout(() => {
+                setError("");
+            }, 2000)
+        }
     }
 
     const handleUpdate = async () => {
@@ -125,18 +158,53 @@ export default function InsideNote() {
                 error && <Alert text="Empty note can't save" type='warning'></Alert>
             }
 
+            {
+                modal && <View style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    height: "100%",
+                    width: "110%",
+                    zIndex: 30,
+                }}>
+                    <TouchableOpacity onPress={() => setModal(!modal)} style={style.customModal}>
+
+                    </TouchableOpacity>
+                    <View style={style.insideModal}>
+                        <View>
+                            <AntDesign name="warning" size={30} color="yellow" />
+                        </View>
+
+                        <ThemedText>Want to delete note?</ThemedText>
+
+                        <View style={{ marginTop: 10, flexDirection: "row", columnGap: 30 }}>
+                            <TouchableOpacity
+                                onPress={handleDelete}
+                                style={{ borderColor: "red", borderWidth: 2, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#ff74748a", height: 40 }}>
+                                <ThemedText>Yes Delete!</ThemedText>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setModal(false)}
+                                style={{ borderColor: "yellow", borderWidth: 2, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#eeff0063", height: 40 }}>
+                                <ThemedText>Cancle</ThemedText>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            }
+
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ gap: 8 }}
-                style={{ overflow: "visible", zIndex: 10 }}
+                style={{ overflow: "visible", zIndex: 10, }}
             >
                 <View>
                     <TouchableOpacity onPress={handleUpdate}>
                         <View style={[style.button, { borderColor: "red" }]}>
                             <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
                                 <ThemedText>Save</ThemedText>
-                                <MaterialIcons name="checklist" size={20} color="red" />
+                                <Ionicons name="server" size={20} color="red" />
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -156,6 +224,17 @@ export default function InsideNote() {
                             <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
                                 <ThemedText>List</ThemedText>
                                 <MaterialIcons name="checklist" size={20} color="blue" />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
+                <View>
+                    <TouchableOpacity onPress={() => setModal(true)}>
+                        <View style={[style.button, { borderColor: "blue" }]}>
+                            <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
+                                <ThemedText>Delete</ThemedText>
+                                <MaterialIcons name="delete" size={20} color="red" />
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -243,6 +322,25 @@ const style = StyleSheet.create({
         borderColor: "grey",
         borderRadius: 3,
         borderWidth: 1
+    },
+    customModal: {
+        position: "absolute",
+        top: 0,
+        width: "120%",
+        height: "100%",
+        right: 10,
+        overflow: "visible",
+        backgroundColor: "#000000dc",
+    },
+    insideModal: {
+        backgroundColor: "#076ff8ff",
+        padding: 30,
+        top: "20%",
+        borderRadius: 5,
+        left: "5%",
+        width: "80%",
+        // height: "auto",
+        alignItems: "center",
     },
     buttonWidth: {
         alignSelf: "flex-start"
