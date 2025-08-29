@@ -1,9 +1,10 @@
+import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-type TType = "success" | "error" | "warning";
+type TType = "success" | "error" | "warning" | "loading";
 
 export default function Alert({ text, type }: { text: string; type: TType }) {
     return (
@@ -18,13 +19,14 @@ export default function Alert({ text, type }: { text: string; type: TType }) {
         >
             <View
                 style={{
-                    backgroundColor: type === 'error' ? '#fdeded' : type === 'success' ? '#edf7ed' : '#fff4e5',
+                    backgroundColor: type === 'error' ? '#fdeded' : type === 'success' ? '#edf7ed' : type === 'warning' ? '#fff4e5' : '#e5f6fd',
                     height: 35,
                     paddingHorizontal: 10,
                     borderRadius: 5,
                     width: '95%',
                     flexDirection: 'row',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     columnGap: 5
                 }}
             >
@@ -32,7 +34,8 @@ export default function Alert({ text, type }: { text: string; type: TType }) {
                     {
                         type === 'error' ? <MaterialIcons name="error" size={24} color="red" /> :
                             type === 'success' ? <MaterialIcons name="done" size={24} color="green" /> :
-                                <Ionicons name="warning" size={24} color="#ed6c02" />
+                                type === 'warning' ? <Ionicons name="warning" size={24} color="#ed6c02" /> :
+                                    <Feather name="loader" size={24} color="#ed6c02" />
                     }
                 </Text>
                 <Text style={{ color: 'black' }}>

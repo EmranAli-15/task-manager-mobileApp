@@ -36,7 +36,7 @@ export default function Category({ category, setCategory }: { category: { value:
                 // <option value="687231b05282890fad825d84">Idea</option>
                 // <option value="687231b05282890fad825d87">Hobby</option>
                 // <option value="687231b05282890fad825d86">Business</option>
-                <View style={[style.categoryBox, {backgroundColor: themeColor}]}>
+                <View style={[style.categoryBox, {}]}>
                     <TouchableOpacity
                         onPress={() => handleCategory({ value: "Home work", key: "687231b05282890fad825d83" })}>
                         <ThemedText style={style.categoryLists}>Home work</ThemedText>
@@ -81,17 +81,21 @@ const style = StyleSheet.create({
     },
     categoryLists: {
         flexDirection: 'column',
+        paddingHorizontal: 4,
         alignItems: 'flex-start',
         height: 30,
-        borderColor: "grey",
+        borderColor: "black",
         borderRadius: 3,
-        borderWidth: 1
+        borderWidth: 1,
+        marginTop: 4,
+        width: "100%"
     },
     categoryBox: {
         position: "absolute",
+        padding: 8,
+        backgroundColor: "gray",
         borderRadius: 5,
-        zIndex: 999,
-        top: 40,
+        top: 40
     },
     buttonWidth: {
         alignSelf: "flex-start"

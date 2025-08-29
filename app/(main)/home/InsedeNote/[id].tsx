@@ -4,6 +4,8 @@ import Color from '@/components/navOptions/Color';
 import List from '@/components/navOptions/List';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import Alert from '@/components/ui/Alert';
+import { useMyProvider } from '@/userProvider/Provider';
 import { baseURL } from '@/utils/baseURL';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useLocalSearchParams } from 'expo-router';
@@ -16,12 +18,16 @@ export default function InsideNote() {
     if (colorScheme == "dark") themeColor = "white"
     else themeColor = "black"
 
+    const { user } = useMyProvider();
     const { id } = useLocalSearchParams();
 
 
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
+    const [updateLoading, setUpdateLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
 
+    const [noteId, setNoteId] = useState("");
     const [colorPattle, setColorPattle] = useState(false);
     const [title, setTitle] = useState("");
     const [color, setColor] = useState({ header: "#ffdf20", body: "#fff085" });
@@ -32,6 +38,42 @@ export default function InsideNote() {
 
     const handleList = () => {
         setList([...list, ""])
+    }
+
+    const handleUpdate = async () => {
+        setError("");
+        setUpdateLoading(true);
+        const data = { title, lists: list, details, categoryId: category.key, userId: user.id, color };
+
+        if (!title && list.length == 0 && !details) {
+            setError("Empty note can't be save!");
+            setUpdateLoading(false);
+            setTimeout(() => setError(""), 2000);
+        }
+        else {
+            try {
+                const response = await fetch(`${baseURL}/api/updateNote/${noteId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Note update failed!');
+                }
+
+            } catch (error: any) {
+                setError(error.message);
+            } finally {
+                setUpdateLoading(false);
+                setSuccess(false);
+                setError("");
+            }
+        }
     }
 
     const handleFetchData = async () => {
@@ -46,13 +88,6 @@ export default function InsideNote() {
             const categoryKey = result.data.categoryId;
             let categoryValue = ""
 
-            // <option value="687231b05282890fad825d83">Home work</option>
-            // <option value="687231b05282890fad825d82">Exams</option>
-            // <option value="687231b05282890fad825d85">Work space</option>
-            // <option value="687231b05282890fad825d84">Idea</option>
-            // <option value="687231b05282890fad825d87">Hobby</option>
-            // <option value="687231b05282890fad825d86">Business</option>
-
             if (categoryKey == "687231b05282890fad825d83") categoryValue = "Home work";
             else if (categoryKey == "687231b05282890fad825d82") categoryValue = "Exams";
             else if (categoryKey == "687231b05282890fad825d85") categoryValue = "Work space";
@@ -63,15 +98,14 @@ export default function InsideNote() {
             setTitle(result.data.title);
             setDetails(result.data.details);
             setList(result.data.lists);
-            setColor(result.data.color)
-            setCategory({ value: categoryValue, key: result.data.categoryId })
+            setColor(result.data.color);
+            setNoteId(result.data._id);
+            setCategory({ value: categoryValue, key: result.data.categoryId });
 
         } catch (error: any) {
             setError("Something happened wrong!");
         } finally {
-            setTimeout(() => {
-                setLoading(false);
-            }, 2000)
+            setLoading(false);
         }
     }
 
@@ -81,13 +115,33 @@ export default function InsideNote() {
 
     return (
         <Container>
+            {
+                updateLoading && <Alert text='Updating' type='loading'></Alert>
+            }
+            {
+                loading && <Alert text='Loading' type='loading'></Alert>
+            }
+            {
+                error && <Alert text="Empty note can't save" type='warning'></Alert>
+            }
 
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ gap: 8 }}
-                style={{ overflow: "visible", zIndex: 1000 }}
+                style={{ overflow: "visible", zIndex: 10 }}
             >
+                <View>
+                    <TouchableOpacity onPress={handleUpdate}>
+                        <View style={[style.button, { borderColor: "red" }]}>
+                            <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
+                                <ThemedText>Save</ThemedText>
+                                <MaterialIcons name="checklist" size={20} color="red" />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+
                 <View>
                     <Color colorPalettle={colorPattle} setColorPalettle={setColorPattle} color={color} setColor={setColor}></Color>
                 </View>
@@ -98,7 +152,7 @@ export default function InsideNote() {
 
                 <View>
                     <TouchableOpacity onPress={handleList} style={style.buttonWidth}>
-                        <View style={style.button}>
+                        <View style={[style.button, { borderColor: "blue" }]}>
                             <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
                                 <ThemedText>List</ThemedText>
                                 <MaterialIcons name="checklist" size={20} color="blue" />
@@ -108,9 +162,11 @@ export default function InsideNote() {
                 </View>
             </ScrollView>
 
-            {/* THIS SECTION CAN SHRINK AND I NEED TO MAKE IT SCROLLABLE */}
 
             <ScrollView>
+
+
+
                 <View style={{ marginTop: 20 }}>
                     <View>
                         <TextInput
@@ -173,7 +229,6 @@ const style = StyleSheet.create({
         color: "blue"
     },
     button: {
-        borderColor: "blue",
         paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 5,

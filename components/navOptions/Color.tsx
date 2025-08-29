@@ -85,7 +85,9 @@ const style = StyleSheet.create({
     },
     colorPalette: {
         position: "absolute",
-        borderRadius:5,
+        padding: 8,
+        backgroundColor: "gray",
+        borderRadius: 5,
         top: 40
     },
     buttonWidth: {
