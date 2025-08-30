@@ -1,14 +1,17 @@
 import Container from '@/components/Container'
 import Category from '@/components/navOptions/Category'
 import Color from '@/components/navOptions/Color'
+import List from '@/components/navOptions/List'
 import { ThemedText } from '@/components/ThemedText'
+import { ThemedView } from '@/components/ThemedView'
+import Alert from '@/components/ui/Alert'
 import { useMyProvider } from '@/userProvider/Provider'
-import FontAwesome from '@expo/vector-icons/FontAwesome'
+import { baseURL } from '@/utils/baseURL'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import { useNavigation } from 'expo-router'
 import React, { useState } from 'react'
-import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from 'react-native'
+import { ScrollView, StyleSheet, TextInput, TouchableOpacity, useColorScheme, View } from 'react-native'
 
 export default function AddNote() {
 
@@ -19,15 +22,13 @@ export default function AddNote() {
     else themeColor = "black"
 
     const { user } = useMyProvider();
-    const [me, setMe] = useState(true);
 
 
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [updateLoading, setUpdateLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState("");
 
-    const [noteId, setNoteId] = useState("");
+
     const [colorPattle, setColorPattle] = useState(false);
     const [title, setTitle] = useState("");
     const [color, setColor] = useState({ header: "#ffdf20", body: "#fff085" });
@@ -41,8 +42,64 @@ export default function AddNote() {
     }
 
 
+    const handleUpload = async () => {
+        setError("");
+        setSuccess("");
+        setLoading(true);
+        const data = { title, lists: list, details, categoryId: category.key, userId: user.id, color };
+
+        if (!title && list.length == 0 && !details) {
+            setError("Empty note can't save!");
+            setLoading(false);
+            setTimeout(() => setError(""), 3000);
+        }
+        else {
+            try {
+                const response = await fetch(`${baseURL}/api/createNote`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Note upload failed!');
+                }
+
+                setLoading(false);
+                setSuccess("Note saved!");
+                setTitle("");
+                setDetails("");
+                setList([]);
+
+            } catch (error: any) {
+                setLoading(false);
+                setError(error.message);
+            } finally {
+                setTimeout(() => {
+                    setError("");
+                    setSuccess("")
+                }, 2000)
+            }
+        }
+    }
+
+
     return (
         <Container>
+
+            {
+                loading && <Alert text='Uploading' type='loading'></Alert>
+            }
+            {
+                error && <Alert text='Something wrong' type='error'></Alert>
+            }
+            {
+                success && <Alert text='Saved' type='success'></Alert>
+            }
 
             <ScrollView
                 horizontal
@@ -51,7 +108,7 @@ export default function AddNote() {
                 style={{ overflow: "visible", zIndex: 10, }}
             >
                 <View>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleUpload}>
                         <View style={[style.button, { borderColor: "red" }]}>
                             <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
                                 <ThemedText>Save</ThemedText>
@@ -79,22 +136,43 @@ export default function AddNote() {
                         </View>
                     </TouchableOpacity>
                 </View>
+            </ScrollView>
 
-                <View>
-                    <TouchableOpacity onPress={() => setMe(!me)} style={style.buttonWidth}>
-                        <View style={[style.button, { borderColor: "blue" }]}>
-                            {
-                                me ? <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
-                                    <ThemedText>My</ThemedText>
-                                    <FontAwesome name="user" size={20} color="red" />
-                                </View> :
-                                    <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
-                                        <ThemedText>Friends</ThemedText>
-                                        <FontAwesome name="users" size={20} color="yellow" />
-                                    </View>
-                            }
-                        </View>
-                    </TouchableOpacity>
+
+            <ScrollView>
+
+
+
+                <View style={{ marginTop: 20 }}>
+                    <View>
+                        <TextInput
+                            style={[{ color: color.header }, style.title]}
+                            onChangeText={(text) => setTitle(text)}
+                            value={title}
+                            textAlignVertical='top'
+                            autoFocus={false}
+                            multiline
+                            placeholder='Title ...'
+                            placeholderTextColor="grey"
+                        />
+                    </View>
+
+                    <View>
+                        <List list={list} setList={setList}></List>
+                    </View>
+
+                    <ThemedView style={{ borderRadius: 8 }}>
+                        <TextInput
+                            style={[style.details, { color: themeColor }]}
+                            onChangeText={(text) => setDetails(text)}
+                            value={details}
+                            textAlignVertical='top'
+                            autoFocus={false}
+                            multiline
+                            placeholder='Details ...'
+                            placeholderTextColor="grey"
+                        />
+                    </ThemedView>
                 </View>
             </ScrollView>
 
