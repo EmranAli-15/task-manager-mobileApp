@@ -1,12 +1,10 @@
 import React from 'react'
-import { SafeAreaView, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Container({ children }: { children: React.ReactNode }) {
     return (
-        <View style={{ padding: 10, flex: 1 }}>
-            <SafeAreaView>
-                {children}
-            </SafeAreaView>
-        </View>
+        <SafeAreaView style={{ flex: 1, padding: 10 }} edges={['top', 'left', 'right']}>
+            {children}
+        </SafeAreaView>
     )
 }

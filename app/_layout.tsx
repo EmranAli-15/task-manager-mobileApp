@@ -15,7 +15,7 @@ function InnerLayout({ colorScheme }: { colorScheme: string }) {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
       </Stack>
-      <StatusBar />
+      <StatusBar backgroundColor="black"></StatusBar>
     </ThemeProvider>
   );
 }
