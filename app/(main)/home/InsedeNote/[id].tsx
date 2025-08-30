@@ -5,6 +5,7 @@ import List from '@/components/navOptions/List';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import Alert from '@/components/ui/Alert';
+import MyModal from '@/components/ui/MyModal';
 import { useMyProvider } from '@/userProvider/Provider';
 import { baseURL } from '@/utils/baseURL';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -158,40 +159,26 @@ export default function InsideNote() {
                 error && <Alert text="Empty note can't save" type='warning'></Alert>
             }
 
-            {
-                modal && <View style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    height: "100%",
-                    width: "110%",
-                    zIndex: 30,
-                }}>
-                    <TouchableOpacity onPress={() => setModal(!modal)} style={style.customModal}>
-
-                    </TouchableOpacity>
-                    <View style={style.insideModal}>
-                        <View>
-                            <AntDesign name="warning" size={30} color="yellow" />
-                        </View>
-
-                        <ThemedText>Want to delete note?</ThemedText>
-
-                        <View style={{ marginTop: 10, flexDirection: "row", columnGap: 30 }}>
-                            <TouchableOpacity
-                                onPress={handleDelete}
-                                style={{ borderColor: "red", borderWidth: 2, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#ff74748a", height: 40 }}>
-                                <ThemedText>Yes Delete!</ThemedText>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => setModal(false)}
-                                style={{ borderColor: "yellow", borderWidth: 2, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#eeff0063", height: 40 }}>
-                                <ThemedText>Cancle</ThemedText>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+            <MyModal modal={modal} setModal={setModal}>
+                <View>
+                    <AntDesign name="warning" size={30} color="yellow" />
                 </View>
-            }
+
+                <ThemedText>Want to delete note?</ThemedText>
+
+                <View style={{ marginTop: 10, flexDirection: "row", columnGap: 30 }}>
+                    <TouchableOpacity
+                        onPress={handleDelete}
+                        style={{ borderColor: "red", borderWidth: 2, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#ff74748a", height: 40 }}>
+                        <ThemedText>Yes Delete!</ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => setModal(false)}
+                        style={{ borderColor: "yellow", borderWidth: 2, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#eeff0063", height: 40 }}>
+                        <ThemedText>Cancle</ThemedText>
+                    </TouchableOpacity>
+                </View>
+            </MyModal>
 
             <ScrollView
                 horizontal
