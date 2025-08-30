@@ -110,16 +110,14 @@ export default function index() {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <Link href="/(main)/home/addNote/AddNote">
           <View style={{ borderColor: "blue", borderWidth: 1, padding: 5, borderRadius: 5 }}>
-            {
               <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
                 <ThemedText>Add Note</ThemedText>
                 <AntDesign name="plussquare" size={20} color="blue" />
               </View>
-            }
           </View>
-        </TouchableOpacity>
+        </Link>
       </View>
 
       {
