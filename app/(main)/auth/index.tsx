@@ -16,8 +16,8 @@ export default function index() {
 
     const { setLoading: providerLoading } = useMyProvider();
 
-    const [email, setEmail] = useState("emran@gmail.com");
-    const [password, setPassword] = useState("emran");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -56,7 +56,7 @@ export default function index() {
     }
 
     const handleSubmit = () => {
-        if (!email || !password) return;
+        if (!email || !password) return setError("Email or Passwoord missing.");
         setLoading(true);
         handleLogin();
     }

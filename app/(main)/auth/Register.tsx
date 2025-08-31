@@ -19,10 +19,10 @@ export default function Register() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const [name, setName] = useState("sakib");
-    const [email, setEmail] = useState("sakib@gmail.com");
-    const [password, setPassword] = useState("sakib");
-    const [confirmPassword, setConfirmPassword] = useState("sakib");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     const resetForm = () => {
         setEmail("");

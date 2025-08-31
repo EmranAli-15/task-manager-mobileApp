@@ -1,15 +1,15 @@
 import Container from '@/components/Container';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { useMyProvider } from '@/userProvider/Provider';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import * as SecureStore from 'expo-secure-store';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import Alert from '@/components/ui/Alert';
 import HomeCardSkeleton from '@/components/ui/HomeCardSkeleton';
+import MyModal from '@/components/ui/MyModal';
 import { baseURL } from '@/utils/baseURL';
 import { Link } from 'expo-router';
 
@@ -72,33 +72,28 @@ export default function index() {
   return (
     <Container>
 
+      {
+        error && <Alert text='Something wrong' type='error'></Alert>
+      }
+
       {/* This is for logout option */}
-      <View>
-        {
-          option &&
-          <ThemedView
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              alignItems: 'center',
-              borderRadius: 5,
-              zIndex: 9999,
-              height: 50
-            }}>
+      {
+        <MyModal modal={option} setModal={setOption}>
+          <View style={{ flexDirection: "row", columnGap: 10 }}>
+            <TouchableOpacity
+              onPress={logout}
+              style={{ borderColor: "red", borderWidth: 1, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#ff74748a", height: 40 }}>
+              <ThemedText>Log out!</ThemedText>
+            </TouchableOpacity>
 
-            <View style={{ flex: 1, justifyContent: 'space-between', alignItems: 'center' }}>
-              <TouchableOpacity onPress={logout}>
-                <Text style={{ color: 'blue' }}>Logout</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => setOption(false)}>
-                <Text style={{ color: 'blue' }}>close</Text>
-              </TouchableOpacity>
-            </View>
-          </ThemedView>
-        }
-      </View>
+            <TouchableOpacity
+              onPress={() => setOption(false)}
+              style={{ borderColor: "yellow", borderWidth: 1, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#eeff0063", height: 40 }}>
+              <ThemedText>Cancle</ThemedText>
+            </TouchableOpacity>
+          </View>
+        </MyModal>
+      }
 
       {/* Header option */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -112,17 +107,17 @@ export default function index() {
 
         <Link href="/(main)/home/addNote/AddNote">
           <View style={{ borderColor: "blue", borderWidth: 1, padding: 5, borderRadius: 5 }}>
-              <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
-                <ThemedText>Add Note</ThemedText>
-                <AntDesign name="plussquare" size={20} color="blue" />
-              </View>
+            <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
+              <ThemedText>Add Note</ThemedText>
+              <AntDesign name="plussquare" size={20} color="blue" />
+            </View>
           </View>
         </Link>
       </View>
 
       {
         loading ? <ScrollView>
-          <View style={{ flexDirection: "column", gap: 5 }}>
+          <View style={{ flexDirection: "column", gap: 5, marginTop: 20 }}>
             <HomeCardSkeleton></HomeCardSkeleton>
             <HomeCardSkeleton></HomeCardSkeleton>
             <HomeCardSkeleton></HomeCardSkeleton>

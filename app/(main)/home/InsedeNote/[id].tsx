@@ -149,123 +149,124 @@ export default function InsideNote() {
 
     return (
         <Container>
-            {
-                updateLoading && <Alert text='Updating' type='loading'></Alert>
-            }
-            {
-                loading && <Alert text='Loading' type='loading'></Alert>
-            }
-            {
-                error && <Alert text="Empty note can't save" type='warning'></Alert>
-            }
+            <View>
+                {
+                    updateLoading && <Alert text='Updating' type='loading'></Alert>
+                }
+                {
+                    loading && <Alert text='Loading' type='loading'></Alert>
+                }
+                {
+                    error && <Alert text="Empty note can't save" type='warning'></Alert>
+                }
 
-            <MyModal modal={modal} setModal={setModal}>
-                <View>
-                    <AntDesign name="warning" size={30} color="yellow" />
-                </View>
-
-                <ThemedText>Want to delete note?</ThemedText>
-
-                <View style={{ marginTop: 10, flexDirection: "row", columnGap: 30 }}>
-                    <TouchableOpacity
-                        onPress={handleDelete}
-                        style={{ borderColor: "red", borderWidth: 2, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#ff74748a", height: 40 }}>
-                        <ThemedText>Yes Delete!</ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => setModal(false)}
-                        style={{ borderColor: "yellow", borderWidth: 2, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#eeff0063", height: 40 }}>
-                        <ThemedText>Cancle</ThemedText>
-                    </TouchableOpacity>
-                </View>
-            </MyModal>
-
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: 8 }}
-                style={{ overflow: "visible", zIndex: 10, }}
-            >
-                <View>
-                    <TouchableOpacity onPress={handleUpdate}>
-                        <View style={[style.button, { borderColor: "red" }]}>
-                            <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
-                                <ThemedText>Save</ThemedText>
-                                <Ionicons name="server" size={20} color="red" />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-
-                <View>
-                    <Color colorPalettle={colorPattle} setColorPalettle={setColorPattle} color={color} setColor={setColor}></Color>
-                </View>
-
-                <View>
-                    <Category category={category} setCategory={setCategory}></Category>
-                </View>
-
-                <View>
-                    <TouchableOpacity onPress={handleList} style={style.buttonWidth}>
-                        <View style={[style.button, { borderColor: "blue" }]}>
-                            <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
-                                <ThemedText>List</ThemedText>
-                                <MaterialIcons name="checklist" size={20} color="blue" />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-
-                <View>
-                    <TouchableOpacity onPress={() => setModal(true)}>
-                        <View style={[style.button, { borderColor: "blue" }]}>
-                            <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
-                                <ThemedText>Delete</ThemedText>
-                                <MaterialIcons name="delete" size={20} color="red" />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-
-
-            <ScrollView>
-
-
-
-                <View style={{ marginTop: 20 }}>
+                <MyModal modal={modal} setModal={setModal}>
                     <View>
-                        <TextInput
-                            style={[{ color: color.header }, style.title]}
-                            onChangeText={(text) => setTitle(text)}
-                            value={title}
-                            textAlignVertical='top'
-                            autoFocus={false}
-                            multiline
-                            placeholder='Title ...'
-                            placeholderTextColor="grey"
-                        />
+                        <AntDesign name="warning" size={30} color="yellow" />
+                    </View>
+
+                    <ThemedText>Want to delete note?</ThemedText>
+
+                    <View style={{ marginTop: 10, flexDirection: "row", columnGap: 30 }}>
+                        <TouchableOpacity
+                            onPress={handleDelete}
+                            style={{ borderColor: "red", borderWidth: 1, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#ff74748a", height: 40 }}>
+                            <ThemedText>Yes Delete!</ThemedText>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => setModal(false)}
+                            style={{ borderColor: "yellow", borderWidth: 1, borderRadius: 8, justifyContent: "center", paddingHorizontal: 10, backgroundColor: "#eeff0063", height: 40 }}>
+                            <ThemedText>Cancle</ThemedText>
+                        </TouchableOpacity>
+                    </View>
+                </MyModal>
+
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 8 }}
+                    style={{ overflow: "visible", zIndex: 10, }}
+                >
+                    <View>
+                        <TouchableOpacity onPress={handleUpdate}>
+                            <View style={[style.button, { borderColor: "red" }]}>
+                                <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
+                                    <ThemedText>Save</ThemedText>
+                                    <Ionicons name="server" size={20} color="red" />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
                     </View>
 
                     <View>
-                        <List list={list} setList={setList}></List>
+                        <Color colorPalettle={colorPattle} setColorPalettle={setColorPattle} color={color} setColor={setColor}></Color>
                     </View>
 
-                    <ThemedView style={{ borderRadius: 8 }}>
-                        <TextInput
-                            style={[style.details, { color: themeColor }]}
-                            onChangeText={(text) => setDetails(text)}
-                            value={details}
-                            textAlignVertical='top'
-                            autoFocus={false}
-                            multiline
-                            placeholder='Details ...'
-                            placeholderTextColor="grey"
-                        />
-                    </ThemedView>
-                </View>
-            </ScrollView>
+                    <View>
+                        <Category category={category} setCategory={setCategory}></Category>
+                    </View>
 
+                    <View>
+                        <TouchableOpacity onPress={handleList} style={style.buttonWidth}>
+                            <View style={[style.button, { borderColor: "blue" }]}>
+                                <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
+                                    <ThemedText>List</ThemedText>
+                                    <MaterialIcons name="checklist" size={20} color="blue" />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View>
+                        <TouchableOpacity onPress={() => setModal(true)}>
+                            <View style={[style.button, { borderColor: "blue" }]}>
+                                <View style={{ flexDirection: 'row', columnGap: 5, alignItems: 'center' }}>
+                                    <ThemedText>Delete</ThemedText>
+                                    <MaterialIcons name="delete" size={20} color="red" />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
+
+
+                <ScrollView>
+
+
+
+                    <View style={{ marginTop: 20 }}>
+                        <View>
+                            <TextInput
+                                style={[{ color: color.header }, style.title]}
+                                onChangeText={(text) => setTitle(text)}
+                                value={title}
+                                textAlignVertical='top'
+                                autoFocus={false}
+                                multiline
+                                placeholder='Title ...'
+                                placeholderTextColor="grey"
+                            />
+                        </View>
+
+                        <View>
+                            <List list={list} setList={setList}></List>
+                        </View>
+
+                        <ThemedView style={{ borderRadius: 8 }}>
+                            <TextInput
+                                style={[style.details, { color: themeColor }]}
+                                onChangeText={(text) => setDetails(text)}
+                                value={details}
+                                textAlignVertical='top'
+                                autoFocus={false}
+                                multiline
+                                placeholder='Details ...'
+                                placeholderTextColor="grey"
+                            />
+                        </ThemedView>
+                    </View>
+                </ScrollView>
+            </View>
         </Container>
     )
 }
